@@ -7,7 +7,9 @@ type Props = {
 export function ProgressBar({value}: Props){
     return(
         <S.Container>
-            <S.Percentage>{value}%</S.Percentage>
+            <S.Percentage>{value.toFixed(0)}%</S.Percentage>
+
+            {/** toFixed(0) - é pra não mostrar as casas decimais da porcentagem */}
 
             <S.Tracker>
                 <S.Progressbar style={{width: `${value}%`}} />

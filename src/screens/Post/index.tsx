@@ -1,13 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useWindowDimensions } from 'react-native';
 
 import { ProgressBar } from '../../components/ProgressBar';
 
 import * as S from './styles';
 
+type ScrollProps = {
+    layoutMeasurement: {
+        height: number;
+    };
+    contentOffset: {
+        y: number;
+    };
+    contentSize: {
+        height: number;
+    };
+}
+
 export function Post(){
+    const [percentage, setPercentage] = useState(0);
+
+    const dimensions = useWindowDimensions();
+
+    function scrollPercentage({layoutMeasurement, contentOffset, contentSize}: ScrollProps){
+        const visibleContent = Math.ceil((dimensions.height / contentSize.height) * 100);
+
+        const value = ((layoutMeasurement.height + contentOffset.y) / contentSize.height) * 100;
+        setPercentage(value < visibleContent ? 0 : value);
+    }
+
     return(
         <S.Container>
-            <S.Scroll showsVerticalScrollIndicator={false} contentContainerStyle={{paddingTop: 100}}>
+            <S.Scroll 
+                showsVerticalScrollIndicator={false} 
+                contentContainerStyle={{paddingTop: 100}}
+                onScroll={(event) => scrollPercentage(event.nativeEvent)} //metodo pra pegar informações do usuário na scroll, fica observando o evento de scroll
+                >
             <S.Title>Lorem ipsum</S.Title>
 
                 <S.ContainerContent>
@@ -50,7 +78,7 @@ export function Post(){
                 </S.ContainerContent>
             </S.Scroll>
 
-            <ProgressBar value={50} />
+            <ProgressBar value={percentage} />
         </S.Container>
     )
 }
